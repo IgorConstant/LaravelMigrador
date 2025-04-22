@@ -1,0 +1,89 @@
+/* filepath: /Users/igorconstant/Workspace/MigradorApp/public/css/app.css */
+body {
+    background-color: #f8f9fa;
+    font-family: "Inter Tight", sans-serif;
+    font-optical-sizing: auto;
+}
+
+h1,h2 {
+    font-weight: 700;
+}
+
+.navbar{
+    background-color: #4bcd81;
+    color: #ffffff;
+
+    .nav-item{
+        .nav-link{
+            color: #333;
+        }
+    }
+
+    .navbar-brand{
+        color: #ffffff!important;
+    }
+}
+
+#curadoriaSection{
+    background-color: #f8f9fa;
+
+    .box-light_gray{
+        background-color: #f4f4f4;
+        border-radius: 5px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        &:hover{
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+    }
+}
+
+.footer {
+    background-color: #4bcd81;
+    color: #333;
+    padding: 10px;
+}
+
+.centered-btn{
+   display: block;
+    margin: 0 auto;
+}
+
+.genres, .years{
+    background-color:#e3e3e3;
+    border-radius: 5px;
+    padding: 20px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.genre-btn, .year-btn, .mood-btn{
+    background-color: #f4f4f4;
+    color: #333;
+    border: 1px solid #ccc;
+    padding: 6px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
+.img__block{
+    padding: 80px;
+}
+
+.login_service{
+    background-color: #4bcd81;
+    padding: 10px 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border: none;
+    color: #ffffff;
+}
+
+.help__text{
+    padding: 60px;
+}
