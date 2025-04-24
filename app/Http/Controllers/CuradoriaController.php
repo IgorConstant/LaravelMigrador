@@ -62,28 +62,37 @@ class CuradoriaController extends Controller
         // Separando as músicas e artistas
         $lines = explode("\n", trim($songsText));
         $tracks = [];
-    
+
         foreach ($lines as $line) {
             if (strpos($line, ' - ') !== false) {
-                [$song, $artist] = explode(' - ', $line);
-                $tracks[] = ['song' => trim($song), 'artist' => trim($artist)];
+                [$songRaw, $artistRaw] = explode(' - ', $line);
+                
+                // Limpa o nome da música: remove numeração e markdown
+                $song = preg_replace(['/^\d+\.\s*\*\*/', '/\*\*$/'], ['', ''], trim($songRaw));
+                
+                // Limpa o nome do artista: remove tudo que estiver entre parênteses
+                $artist = preg_replace('/\s*\(.*?\)/', '', trim($artistRaw));
+                
+                $tracks[] = ['song' => $song, 'artist' => $artist];
             }
         }
+        
     
         // Log para verificar as músicas extraídas
-        Log::info('Músicas extraídas:', ['tracks' => $tracks]);
+        Log::info('Músicas extraídas após limpeza:', ['tracks' => $tracks]);
     
         // Buscando as músicas no Spotify usando o token de acesso
         $uris = [];
         foreach ($tracks as $track) {
-            $query = urlencode($track['song'] . ' ' . $track['artist']);
+            // Monta o query com o formato "Nome da Música - Artista"
+            $query = urlencode($track['song'] . ' - ' . strtolower($track['artist']));
             $searchUrl = "https://api.spotify.com/v1/search?q={$query}&type=track&limit=1";
-    
-            // Fazendo a requisição para buscar a música no Spotify
+        
+            // Faz a requisição para buscar a música no Spotify
             $searchResponse = Http::withToken($accessToken)->get($searchUrl);
             $result = $searchResponse->json();
-    
-            // Verificando se a música foi encontrada no Spotify
+        
+            // Se a música for encontrada, adiciona o URI; se não, ignora essa música
             if (!empty($result['tracks']['items'])) {
                 $uris[] = $result['tracks']['items'][0]['uri'];
             }
