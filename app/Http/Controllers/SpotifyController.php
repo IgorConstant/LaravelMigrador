@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Session;
 use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Http\Request; 
 use Illuminate\Support\Facades\Log;
 
 class SpotifyController extends Controller
@@ -16,14 +17,18 @@ class SpotifyController extends Controller
             ->redirect();
     }
 
-    public function handleSpotifyCallback()
+    public function handleSpotifyCallback(Request $request)
     {
         $user = Socialite::driver('spotify')->stateless()->user();
         Session::put('spotify_access_token', $user->token);
         Session::put('spotify_refresh_token', $user->refreshToken);
         Session::put('spotify_user', $user->id);
 
-        return redirect('/curadoria')->with('success', 'Autenticado no Spotify!');
+    
+        // Checa a origem da requisição (ex: 'selecione-origem' ou 'curadoria')
+        $redirectUrl = $request->query('redirect') === 'servico-origem' ? '/playlists' : '/curadoria';
+
+        return redirect($redirectUrl)->with('success', 'Autenticado no Spotify!');
     }
 
     public static function createPlaylistWithTracks($accessToken, $userId, $trackUris, $name = 'Playlist Curada 🎶')

@@ -90,13 +90,13 @@ h1,h2 {
 
 .grid-container {
     display: grid;
-    grid-template-columns: repeat(2, 0fr);
+    grid-template-columns: repeat(4, 0fr);
     gap: 2rem;
-    
+    margin: 25px 0;
 }
 
 .logo img {
-    max-width: 200px;
+    max-width: 100px;
     height: auto;
     border-radius: 5px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);

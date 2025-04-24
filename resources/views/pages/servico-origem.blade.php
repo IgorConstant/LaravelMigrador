@@ -5,7 +5,7 @@
 @section('content')
     <section id="servicoOrigemBlock">
        <div class="container">
-            <div class="row">
+            <div class="row align-items-center">
                 <div class="col-md-12 col-lg-6">
                     <div class="content py-5">
                         <h1>Selecione o serviço de origem</h1>

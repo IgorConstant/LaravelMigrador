@@ -10,7 +10,7 @@
                 <p class="lead mb-4">Aplicação desenvolvida em Laravel, para realizar migrações e curadoria de playlists.
                 </p>
                 <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
-                    <button type="button" class="btn btn-outline-secondary login_service">Primeiros Passos</button>
+                    <a href="/servico-origem" class="btn btn-outline-secondary login_service">Primeiros Passos</a>
                 </div>
             </div>
         </div>
