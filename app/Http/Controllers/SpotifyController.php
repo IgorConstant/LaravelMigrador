@@ -24,11 +24,14 @@ class SpotifyController extends Controller
         Session::put('spotify_refresh_token', $user->refreshToken);
         Session::put('spotify_user', $user->id);
 
-    
-        // Checa a origem da requisição (ex: 'selecione-origem' ou 'curadoria')
-        $redirectUrl = $request->query('redirect') === 'servico-origem' ? '/playlists' : '/curadoria';
-
-        return redirect($redirectUrl)->with('success', 'Autenticado no Spotify!');
+        // Verifica se o usuário está autenticado
+        if ($user) {
+            // Redireciona para a página de playlists
+            return redirect()->route('playlists');
+        } else {
+            // Se não estiver autenticado, redireciona para a página de erro
+            return redirect()->route('error');
+        }
     }
 
     public static function createPlaylistWithTracks($accessToken, $userId, $trackUris, $name = 'Playlist Curada 🎶')
@@ -60,6 +63,30 @@ class SpotifyController extends Controller
         }
     
         return $playlist['external_urls']['spotify'] ?? null;
+    }
+
+    public static function retrieveUserPlaylists($accessToken)
+    {
+        $response = Http::withToken($accessToken)->get('https://api.spotify.com/v1/me/playlists');
+    
+        if ($response->successful()) {
+            return $response->json()['items'] ?? [];
+        } else {
+            Log::error('Erro ao recuperar playlists do Spotify', ['response' => $response->json()]);
+            return [];
+        }
+    }
+
+    public function playlists()
+    {
+        $accessToken = Session::get('spotify_access_token');
+        if (!$accessToken) {
+            return redirect()->route('spotify.login')
+                ->with('error', 'Você precisa fazer login no Spotify para acessar as playlists.');
+        }
+
+        $playlists = self::retrieveUserPlaylists($accessToken);
+        return view('pages.playlists', compact('playlists'));
     }
     
 }

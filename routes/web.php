@@ -12,6 +12,8 @@ Route::get('/servico-origem', function () {
     return view('pages/servico-origem');
 });
 
+Route::get('/playlists', [SpotifyController::class, 'playlists'])->name('playlists');
+
 Route::get('/curadoria', [CuradoriaController::class, 'show'])->name('curadoria.show');
 
 

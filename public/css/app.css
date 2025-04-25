@@ -5,36 +5,42 @@ body {
     font-optical-sizing: auto;
 }
 
-h1,h2 {
+h1{
+    font-size: 2.5rem!important;
+}
+
+h1,
+h2 {
     font-weight: 700;
 }
 
-.navbar{
+.navbar {
     background-color: #4bcd81;
     color: #ffffff;
 
-    .nav-item{
-        .nav-link{
+    .nav-item {
+        .nav-link {
             color: #333;
         }
     }
 
-    .navbar-brand{
-        color: #ffffff!important;
+    .navbar-brand {
+        color: #ffffff !important;
     }
 }
 
-#curadoriaSection{
+#curadoriaSection {
     background-color: #f8f9fa;
 
-    .box-light_gray{
+    .box-light_gray {
         background-color: #f4f4f4;
         border-radius: 5px;
         padding: 20px;
         margin-bottom: 20px;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         transition: all 0.3s ease;
-        &:hover{
+
+        &:hover {
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
     }
@@ -46,13 +52,14 @@ h1,h2 {
     padding: 10px;
 }
 
-.centered-btn{
-   display: block;
+.centered-btn {
+    display: block;
     margin: 0 auto;
 }
 
-.genres, .years{
-    background-color:#e3e3e3;
+.genres,
+.years {
+    background-color: #e3e3e3;
     border-radius: 5px;
     padding: 20px;
     margin-bottom: 10px;
@@ -60,7 +67,9 @@ h1,h2 {
     transition: all 0.3s ease;
 }
 
-.genre-btn, .year-btn, .mood-btn{
+.genre-btn,
+.year-btn,
+.mood-btn {
     background-color: #f4f4f4;
     color: #333;
     border: 1px solid #ccc;
@@ -71,11 +80,11 @@ h1,h2 {
     margin-bottom: 10px;
 }
 
-.img__block{
+.img__block {
     padding: 80px;
 }
 
-.login_service{
+.login_service {
     background-color: #4bcd81;
     padding: 10px 20px;
     border-radius: 5px;
@@ -84,7 +93,7 @@ h1,h2 {
     color: #ffffff;
 }
 
-.help__text{
+.help__text {
     padding: 60px;
 }
 
@@ -101,8 +110,99 @@ h1,h2 {
     border-radius: 5px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
-    &:hover{
+
+    &:hover {
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     }
+
     margin-bottom: 20px;
+}
+
+.playlist-box {
+    background-color: #1c1c1c;
+    border-radius: 20px;
+    padding: 2rem;
+    width: 420px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+}
+
+h1 {
+    font-size: 1.6rem;
+    font-weight: 600;
+    margin-bottom: 2rem;
+}
+
+.slider-container {
+    background-color: #d0d0d0 ;
+    border-radius: 14px;
+    padding: 1rem 2rem;
+    margin-bottom: 1.5rem;
+}
+
+.noUi-connect{
+    background: #1ed760;
+}
+
+#year-max, #year-min {
+    color: #333;
+    font-weight: 700;
+}
+
+#slider {
+    margin-top: 10px;
+}
+
+.years-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+}
+
+.genres-container {
+    background-color: #d0d0d0;
+    border-radius: 14px;
+    padding: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 2rem;
+}
+
+.genre-btn {
+    background-color: #1c1c1c;
+    border: 2px solid #333;
+    border-radius: 8px;
+    color: #fff;
+    padding: 6px 14px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.genre-btn.active {
+    background-color: #1ed760;
+    color: #000;
+    font-weight: bold;
+}
+
+.btn-create {
+    background-color: #1ed760;
+    color: #000;
+    font-size: 1rem;
+    font-weight: bold;
+    border: none;
+    padding: 0.75rem;
+    border-radius: 12px;
+    width: 100%;
+}
+
+.gray__box{
+    background-color: #f4f4f4;
+    border-radius: 5px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+
 }
