@@ -41,6 +41,12 @@ return [
         'redirect' => env('SPOTIFY_REDIRECT_URI'),
     ],
 
+    'google' => [
+        'client_id' => env('YOUTUBE_CLIENT_ID'),
+        'client_secret' => env('YOUTUBE_CLIENT_SECRET'), // este precisa estar presente!
+        'redirect' => env('YOUTUBE_REDIRECT_URI'),
+    ],
+
 
 
 ];

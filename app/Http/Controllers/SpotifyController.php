@@ -88,5 +88,99 @@ class SpotifyController extends Controller
         $playlists = self::retrieveUserPlaylists($accessToken);
         return view('pages.playlists', compact('playlists'));
     }
-    
+
+
+    public static function migratePlaylistToYouTube($spotifyAccessToken, $playlistId, $youtubeAccessToken)
+    {
+        // 1. Recupera as faixas da playlist do Spotify
+        $tracksResponse = Http::withToken($spotifyAccessToken)
+            ->get("https://api.spotify.com/v1/playlists/{$playlistId}");
+
+        if (!$tracksResponse->successful()) {
+            Log::error('Erro ao buscar faixas da playlist do Spotify', ['response' => $tracksResponse->json()]);
+            return null;
+        }
+
+        $tracks = $tracksResponse->json()['items'] ?? [];
+        $trackNames = [];
+        foreach ($tracks as $item) {
+            $track = $item['track'];
+            $trackNames[] = $track['name'] . ' ' . implode(' ', array_column($track['artists'], 'name'));
+        }
+
+        // 2. Cria uma nova playlist no YouTube
+        $playlistTitle = 'Migrada do Spotify';
+        $ytPlaylistResponse = Http::withToken($youtubeAccessToken)
+            ->post('https://www.googleapis.com/youtube/v3/playlists?part=snippet,status', [
+                'snippet' => [
+                    'title' => $playlistTitle,
+                    'description' => 'Playlist migrada do Spotify',
+                ],
+                'status' => [
+                    'privacyStatus' => 'public'
+                ]
+            ]);
+
+        if (!$ytPlaylistResponse->successful()) {
+            Log::error('Erro ao criar playlist no YouTube', ['response' => $ytPlaylistResponse->json()]);
+            return null;
+        }
+
+        $ytPlaylistId = $ytPlaylistResponse->json()['id'];
+
+        // 3. Para cada faixa, busca no YouTube e adiciona à playlist
+        foreach ($trackNames as $trackName) {
+            // Busca vídeo no YouTube
+            $searchResponse = Http::withToken($youtubeAccessToken)
+                ->get('https://www.googleapis.com/youtube/v3/search', [
+                    'part' => 'snippet',
+                    'q' => $trackName,
+                    'type' => 'video',
+                    'maxResults' => 1
+                ]);
+
+            if ($searchResponse->successful() && !empty($searchResponse->json()['items'])) {
+                $videoId = $searchResponse->json()['items'][0]['id']['videoId'];
+
+                // Adiciona vídeo à playlist
+                Http::withToken($youtubeAccessToken)
+                    ->post('https://www.googleapis.com/youtube/v3/playlistItems?part=snippet', [
+                        'snippet' => [
+                            'playlistId' => $ytPlaylistId,
+                            'resourceId' => [
+                                'kind' => 'youtube#video',
+                                'videoId' => $videoId
+                            ]
+                        ]
+                    ]);
+            }
+        }
+
+        return "https://www.youtube.com/playlist?list={$ytPlaylistId}";
+    }
+
+    public function migrateSelectedPlaylists(Request $request)
+    {
+        $playlistIds = $request->input('playlists', []);
+        $spotifyAccessToken = Session::get('spotify_access_token');
+        $youtubeAccessToken = Session::get('youtube_access_token');
+
+        // Se não estiver autenticado no YouTube, salva as playlists selecionadas e redireciona para o OAuth
+        if (!$youtubeAccessToken) {
+            Session::put('pending_playlists', $playlistIds);
+            return redirect()->route('youtube.login');
+        }
+
+        // Se já estiver autenticado, faz a migração normalmente
+        $linksMigradas = [];
+        foreach ($playlistIds as $playlistId) {
+            $link = self::migratePlaylistToYouTube($spotifyAccessToken, $playlistId, $youtubeAccessToken);
+            if ($link) {
+                $linksMigradas[] = $link;
+            }
+        }
+
+        return redirect()->back()->with('success', 'Playlists migradas com sucesso!')->with('links', $linksMigradas);
+    }
+
 }

@@ -7,24 +7,27 @@
         <div class="container">
             <div class="title-block">
                 <h1 class="text-center mb-0">Suas Playlists</h1>
-                <p class="text-center">Logo abaixo estão suas playlists. Selecione as que deseja migrar e, em seguida,
-                    escolha o serviço de destino.</p>
+                <p class="text-center">
+                    Logo abaixo estão suas playlists. Selecione as que deseja migrar e, em seguida, escolha o serviço de
+                    destino.
+                </p>
             </div>
 
             <div class="row">
                 <div class="col-md-6">
                     <div class="gray__box my-4">
-                        <form action="" method="POST">
+                        <form action="{{ route('playlists.migrate') }}" method="POST">
                             @csrf
                             @if(count($playlists) > 0)
                                 <ul class="list-unstyled">
                                     @foreach($playlists as $playlist)
-                                        <li class="media mb-3 align-items-center d-flex">
-                                            <input type="checkbox" name="playlists[]" value="{{ $playlist['id'] }}" style="margin-right: 10px">
+                                        <li class="media mb-3 {{ $loop->iteration > 5 ? 'hidden-playlist' : '' }}">
+                                            <input type="checkbox" name="playlists[]" value="{{ $playlist['id'] }}"
+                                                style="margin-right: 10px">
                                             {{-- Verifica se a playlist tem imagem --}}
                                             @if(isset($playlist['images'][0]))
                                                 <img src="{{ $playlist['images'][0]['url'] }}" alt="{{ $playlist['name'] }}"
-                                                    style="width: 50px; height: 50px;margin-right: 10px">
+                                                    style="width: 50px; height: 50px; margin-right: 10px;border-radius: 10px;">
                                             @else
                                                 <img src="https://via.placeholder.com/50" alt="Sem imagem">
                                             @endif
@@ -34,6 +37,10 @@
                                         </li>
                                     @endforeach
                                 </ul>
+
+                                @if(count($playlists) > 5)
+                                    <button id="btn-ver-mais" type="button" class="btn btn-secondary">Ver Mais</button>
+                                @endif
                                 <button type="submit" class="btn btn-primary">Migrar Playlists</button>
                             @else
                                 <p>Nenhuma playlist encontrada.</p>
@@ -41,7 +48,33 @@
                         </form>
                     </div>
                 </div>
+                <div class="col-md-6">
+                    <div class="img__box p-5">
+                        <img src="{{ asset('images/playlist-page.svg') }}" alt="Imagem ilustrativa de playlists" class="img-fluid">
+                    </div>
+                </div>
             </div>
         </div>
+
+        @if(session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+                @if(session('links'))
+                    <ul>
+                        @foreach(session('links') as $link)
+                            <li><a href="{{ $link }}" target="_blank">{{ $link }}</a></li>
+                        @endforeach
+                    </ul>
+                @endif
+            </div>
+        @endif
     </section>
+
+    <script>
+        document.getElementById('btn-ver-mais')?.addEventListener('click', function () {
+            const hiddenItems = document.querySelectorAll('.hidden-playlist');
+            hiddenItems.forEach(item => item.classList.remove('hidden-playlist'));
+            this.style.display = 'none';
+        });
+    </script>
 @endsection

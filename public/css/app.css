@@ -206,3 +206,12 @@ h1 {
     transition: all 0.3s ease;
 
 }
+
+.hidden-playlist {
+    display: none!important;
+}
+
+.media{
+    display: flex;
+    align-items: center;
+}
