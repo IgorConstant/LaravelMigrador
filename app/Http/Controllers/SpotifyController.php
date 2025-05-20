@@ -101,15 +101,19 @@ class SpotifyController extends Controller
             return null;
         }
 
-        $tracks = $tracksResponse->json()['items'] ?? [];
+        $playlistData = $tracksResponse->json();
+        $tracks = $playlistData['tracks']['items'] ?? [];
+
         $trackNames = [];
         foreach ($tracks as $item) {
             $track = $item['track'];
-            $trackNames[] = $track['name'] . ' ' . implode(' ', array_column($track['artists'], 'name'));
+            $trackNames[] = "{$track['name']} official audio " . implode(', ', array_column($track['artists'], 'name'));
         }
 
+        Log::debug('Faixas extraídas do Spotify', $trackNames);
+
         // 2. Cria uma nova playlist no YouTube
-        $playlistTitle = 'Migrada do Spotify';
+        $playlistTitle = 'Playlist Migrada do Spotify';
         $ytPlaylistResponse = Http::withToken($youtubeAccessToken)
             ->post('https://www.googleapis.com/youtube/v3/playlists?part=snippet,status', [
                 'snippet' => [
@@ -130,20 +134,20 @@ class SpotifyController extends Controller
 
         // 3. Para cada faixa, busca no YouTube e adiciona à playlist
         foreach ($trackNames as $trackName) {
-            // Busca vídeo no YouTube
-            $searchResponse = Http::withToken($youtubeAccessToken)
-                ->get('https://www.googleapis.com/youtube/v3/search', [
-                    'part' => 'snippet',
-                    'q' => $trackName,
-                    'type' => 'video',
-                    'maxResults' => 1
-                ]);
+            // Busca vídeo no YouTube usando API Key
+            $searchResponse = Http::get('https://www.googleapis.com/youtube/v3/search', [
+                'part' => 'snippet',
+                'q' => $trackName,
+                'type' => 'video',
+                'maxResults' => 1,
+                'key' => env('YOUTUBE_API_KEY')
+            ]);
 
             if ($searchResponse->successful() && !empty($searchResponse->json()['items'])) {
                 $videoId = $searchResponse->json()['items'][0]['id']['videoId'];
 
-                // Adiciona vídeo à playlist
-                Http::withToken($youtubeAccessToken)
+                // Adiciona vídeo à playlist usando OAuth2
+                $addResponse = Http::withToken($youtubeAccessToken)
                     ->post('https://www.googleapis.com/youtube/v3/playlistItems?part=snippet', [
                         'snippet' => [
                             'playlistId' => $ytPlaylistId,
@@ -153,14 +157,28 @@ class SpotifyController extends Controller
                             ]
                         ]
                     ]);
+
+                if (!$addResponse->successful()) {
+                    Log::error('Erro ao adicionar vídeo à playlist do YouTube', [
+                        'track' => $trackName,
+                        'videoId' => $videoId,
+                        'response' => $addResponse->json()
+                    ]);
+                }
+            } else {
+                Log::warning('Nenhum vídeo encontrado para a faixa', ['track' => $trackName]);
             }
         }
 
         return "https://www.youtube.com/playlist?list={$ytPlaylistId}";
     }
 
+
     public function migrateSelectedPlaylists(Request $request)
     {
+        
+        set_time_limit(300);
+        
         $playlistIds = $request->input('playlists', []);
         $spotifyAccessToken = Session::get('spotify_access_token');
         $youtubeAccessToken = Session::get('youtube_access_token');

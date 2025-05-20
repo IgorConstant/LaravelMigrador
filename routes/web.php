@@ -28,5 +28,5 @@ Route::post('/curadoria/criar', [CuradoriaController::class, 'criar'])->name('cu
 Route::post('/playlists/migrate', [SpotifyController::class, 'migrateSelectedPlaylists'])->name('playlists.migrate');
 
 
-Route::get('/auth/youtube/redirect', [YouTubeMusicController::class, 'redirectToYouTube'])->name('youtube.login');
-Route::get('/auth/youtube/callback', [YouTubeMusicController::class, 'handleYouTubeCallback']);
+Route::get('/auth/youtubemusic/redirect', [YouTubeMusicController::class, 'redirectToYouTube'])->name('youtube.login');
+Route::get('/auth/youtubemusic/callback', [YouTubeMusicController::class, 'handleYouTubeCallback']);
